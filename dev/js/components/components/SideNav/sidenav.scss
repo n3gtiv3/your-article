@@ -1,0 +1,19 @@
+.SideNav {
+	height: 100vh;
+	min-height: 100%;
+	background: #333;
+	position: fixed;
+	overflow: auto;
+	padding-bottom: 32px + 15px; // Height of ActionBar + some extra
+	width: 17%;
+}	
+
+// This can definitely be deleted
+.SideNav-companyLogo {
+	color: #82E9F3;
+	font-weight: 300;
+	cursor: pointer;
+	padding: 15px 0 10px 15px;
+	font-size: 1.8rem;
+	display: block;
+}

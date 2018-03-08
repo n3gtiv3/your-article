@@ -1,0 +1,41 @@
+*,
+*:after,
+*:before {
+	box-sizing: border-box;
+}
+
+html,
+body {
+	padding: 0;
+	margin: 0;
+	background: $body-bg;
+	height: 100%;
+}
+
+article,
+aside,
+figcaption,
+figure,
+footer,
+header,
+main, 
+menu,
+nav,
+section { 
+  display: block;
+}
+
+button {
+	background: transparent;
+	border: none;
+	cursor: pointer;
+}
+
+.Content {
+	perspective: 1000px;
+	padding: 0 1.5em 35px;
+
+	.row + .row {
+		margin-top: 30px;
+	}
+}
