@@ -18,10 +18,10 @@ figcaption,
 figure,
 footer,
 header,
-main, 
+main,
 menu,
 nav,
-section { 
+section {
   display: block;
 }
 
@@ -38,4 +38,11 @@ button {
 	.row + .row {
 		margin-top: 30px;
 	}
+}
+
+.error {
+	color:#ea6153
+}
+.success{
+	color : #40d47e
 }

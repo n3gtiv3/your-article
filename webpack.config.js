@@ -10,6 +10,10 @@ module.exports = {
           "/" : "http://localhost:8080"
         }
     },
+    resolve: {
+      root: path.resolve('dev/js/'),
+      extensions: ['', '.js', '.scss', '.css']
+    },
     devtool: 'cheap-module-eval-source-map',
     entry: './dev/js/index.js',
     module: {
