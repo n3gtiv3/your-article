@@ -5,5 +5,5 @@ module.exports = {
   504 : "Invalid Price",
   505 : "Inavlid Transaction type",
   506 : "Invalid quantity",
-  601 : "short sell is not allowed in this version"
+  601 : "Selling quantity cannot be more than the total purchases in this version."
 }

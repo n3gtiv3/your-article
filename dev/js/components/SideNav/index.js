@@ -19,18 +19,13 @@ const SideNav = (props) => {
       faClass: 'fa-bar-chart'
     },
     {
-      title: 'Closing',
-      link: '/closing',
-      faClass: 'fa-bar-chart'
-    },
-    {
       title: 'Purchases',
-      link: '/purchases',
+      link: '/purchase',
       faClass: 'fa-bar-chart'
     },
     {
       title: 'Sales',
-      link: '/sales',
+      link: '/sale',
       faClass: 'fa-bar-chart'
     }
   ];

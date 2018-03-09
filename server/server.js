@@ -3,10 +3,10 @@ const bodyParser = require('body-parser')
 const path = require('path');
 const app = express();
 const errorMessages = require('./errorCode');
-const {saveTxn, checkIfCanSell} = require('./saveData');
+const {saveTxn, checkIfCanSell, getSummary, getOpenings, getpurchases, getSales} = require('./saveData');
 const db = require('./db');
 
-app.use(express.static(path.join(__dirname, 'build')));
+app.use(express.static(path.join(__dirname, '../src/')));
 
 app.get('/ping', function (req, res) {
  return res.send('pong');
@@ -52,7 +52,7 @@ app.get('/saveTransaction', function(req, res){
       message : 'success'
     });
   }else if(type == "sell"){
-    checkIfCanSell(stockCode, quantity).then(canSell => {
+    checkIfCanSell(stockCode, quantity, longDate).then(canSell => {
       console.log(canSell);
       if(canSell){
         saveTxn(type, stockCode, quantity, price, longDate);
@@ -71,11 +71,48 @@ app.get('/saveTransaction', function(req, res){
   }
 
 });
-
-app.get('/', function (req, res) {
+app.get('/summary', async function(req, res){
+  try{
+    const response = await getSummary();
+    res.send(response);
+  }catch(e){
+    res.status(500).send("something went wrong!!");
+  }
+});
+app.get('/openings', async function(req, res){
+  try{
+    const response = await getOpenings();
+    res.send({
+      openings : response
+    });
+  }catch(e){
+    res.status(500).send("something went wrong!!");
+  }
+});
+app.get('/purchases', async function(req, res){
+  try{
+    const response = await getpurchases();
+    res.send({
+      purchases : response
+    });
+  }catch(e){
+    res.status(500).send("something went wrong!!");
+  }
+});
+app.get('/sales', async function(req, res){
+  try{
+    const response = await getSales();
+    res.send({
+      sales : response
+    });
+  }catch(e){
+    res.status(500).send("something went wrong!!");
+  }
+});
+app.get(['/','/opening','/sale','/purchase'], function (req, res) {
   res.sendFile(path.join(__dirname, '../src/', 'index.html'));
 });
 //do some init db Operations
 db.init();
 
-app.listen(process.env.PORT || 8080);
+app.listen(8080);

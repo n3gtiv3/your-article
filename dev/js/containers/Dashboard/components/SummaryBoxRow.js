@@ -1,13 +1,12 @@
 import React, { Component, PropTypes } from 'react';
 import Box from '../../../components/Box/';
-import formatMoney from '../../../utils/format';
+import {formatMoney} from '../../../utils/format';
 
 const SummaryBoxRow = (props) => {
   const {
     ltcg=0,
     stcg=0,
-    speculation=0,
-    total=0
+    speculation=0
   } = props;
 
   return (
@@ -19,7 +18,7 @@ const SummaryBoxRow = (props) => {
           </h2>
 
           <strong className="SummaryBox-value">
-            {ltcg || 0}
+          {'Rs'} {formatMoney(ltcg) || 0}
           </strong>
         </Box>
       </div>
@@ -31,7 +30,7 @@ const SummaryBoxRow = (props) => {
           </h2>
 
           <strong className="SummaryBox-value">
-           {'Rs'} {formatMoney(total) || 0}
+           {'Rs'} {formatMoney(stcg) || 0}
           </strong>
         </Box>
       </div>
@@ -47,17 +46,6 @@ const SummaryBoxRow = (props) => {
         </Box>
       </div>
 
-      <div className="col-md-3">
-				<Box className="SummaryBox Box--blue">
-          <h2 className="SummaryBox-title">
-            TOTAL
-          </h2>
-
-          <strong className="SummaryBox-value">
-          {'Rs'} {formatMoney(total)}
-          </strong>
-        </Box>
-      </div>
     </div>
   );
 };

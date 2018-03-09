@@ -14,7 +14,7 @@ const Header = (props) => {
 
       <UserInfo
         image={props.image}
-        userName={props.userName}
+        userName={"Dhiraj"}
       />
     </header>
   );

@@ -17,11 +17,6 @@ const UserInfo = (props) => {
 				</button>
 
 
-			<img
-				className="UserInfo-image"
-				src={props.image}
-			/>
-
 			<strong className="UserInfo-name">
 				{props.userName}
 			</strong>
