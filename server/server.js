@@ -3,10 +3,10 @@ const bodyParser = require('body-parser')
 const path = require('path');
 const app = express();
 const errorMessages = require('./errorCode');
-const {saveTxn, checkIfCanSell, getSummary, getOpenings, getpurchases, getSales} = require('./saveData');
+const {saveTxn, checkIfCanSell, getSummary, getOpenings, getpurchases, getSales, deleteTransaction} = require('./saveData');
 const db = require('./db');
 
-app.use(express.static(path.join(__dirname, '../src/')));
+app.use(express.static(path.join(__dirname, '../build/')));
 
 app.get('/ping', function (req, res) {
  return res.send('pong');
@@ -21,7 +21,7 @@ function handleError(res, errorCode){
 }
 app.get('/saveTransaction', function(req, res){
   const {query} = req;
-  let {type, stockCode, quantity, price, longDate} = query;
+  let {type, stockCode, quantity, price, longDate, update, txnId, remarks} = query;
   quantity = quantity - "";
   price = price - "";
   longDate = longDate - "";
@@ -45,20 +45,31 @@ app.get('/saveTransaction', function(req, res){
     handleError(res, 503);
     return ;
   }
+  if(update && !txnId){
+    handleError(res, 702);
+    return ;
+  }
+  let message = "";
+  if(update){
+    message = "Transaction updated successfully for " + stockCode;
+  }else{
+    message = "Transaction added successfully for " + stockCode;
+  }
   if(type === "buy"){
-    saveTxn(type, stockCode, quantity, price, longDate);
+    saveTxn(type, stockCode, quantity, price, longDate,remarks, update, txnId);
+
     res.send({
       code : 200,
-      message : 'success'
+      message
     });
   }else if(type == "sell"){
     checkIfCanSell(stockCode, quantity, longDate).then(canSell => {
       console.log(canSell);
       if(canSell){
-        saveTxn(type, stockCode, quantity, price, longDate);
+        saveTxn(type, stockCode, quantity, price, longDate,remarks, update, txnId);
         res.send({
           code : 200,
-          message : 'success'
+          message
         });
       }else{
         handleError(res, 601);
@@ -109,8 +120,28 @@ app.get('/sales', async function(req, res){
     res.status(500).send("something went wrong!!");
   }
 });
+app.get('/deleteTransaction', async function(req, res){
+  try{
+    const {query} = req;
+    let {txnId} = query;
+    txnId = txnId - "";
+    if(!txnId){
+      handleError(res, 701);
+      return ;
+    }
+    deleteTransaction(txnId, ()=>{
+      res.send({
+        code : 200,
+        message : "Transaction successfully deleted"
+      });
+    }, ()=>{handleError(res, 701)});
+
+  }catch(e){
+    handleError(res, 701);
+  }
+});
 app.get(['/','/opening','/sale','/purchase'], function (req, res) {
-  res.sendFile(path.join(__dirname, '../src/', 'index.html'));
+  res.sendFile(path.join(__dirname, '../build/', 'index.html'));
 });
 //do some init db Operations
 db.init();

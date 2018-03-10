@@ -12,11 +12,17 @@ function getAvgPrice(totalQuantity, totalAmount){
 exports.createKey = createKey;
 exports.getAvgPrice = getAvgPrice;
 
-exports.saveTxn = function(type, stockCode, quantity, price, longDate){
+exports.saveTxn = function(type, stockCode, quantity, price, longDate, remarks, update, txnId){
   var db = connection.openDbConnection();
-  var statement = "INSERT into transactions(txn_date, price, quantity, stock_code, txn_type) \
-  VALUES (?,?,?,?,?)"
-  db.run(statement, [longDate, price, quantity, stockCode, type]);
+  if(update){
+    var statement = "UPDATE transactions SET txn_date = ?, price = ?,\
+    quantity = ?, stock_code = ?, txn_type = ?, remarks = ? \
+    WHERE txn_id = " + txnId;
+  }else{
+    var statement = "INSERT into transactions(txn_date, price, quantity, stock_code, txn_type, remarks) \
+    VALUES (?,?,?,?,?,?)";
+  }
+  db.run(statement, [longDate, price, quantity, stockCode, type, remarks]);
   connection.closeDbConnection(db);
 }
 exports.checkIfCanSell = function(stockCode, quantity, longDate){
@@ -47,9 +53,14 @@ function getLastFiscalYearTime(){
   currentDate.setDate(31);
   return currentDate.getTime();
 }
+function getLastYear(longDate){
+  let date = new Date(longDate);
+  date.setFullYear(date.getFullYear() - 1);
+  return date.getTime();
+}
 exports.getOpenings = async function(){
   var db = connection.openDbConnection();
-  var statement = "SELECT txn_id as id, price, quantity, stock_code as stock, txn_date as date from transactions WHERE txn_type = 'buy' AND txn_date <= ?";
+  var statement = "SELECT txn_id as id, txn_type as transactionType, price, quantity, stock_code as stock, txn_date as date, remarks from transactions WHERE txn_type = 'buy' AND txn_date <= ?";
   var openings = await new Promise((resolve, reject) => {
     db.all(statement, [getLastFiscalYearTime()], function(err, res){
       if(err){
@@ -64,7 +75,7 @@ exports.getOpenings = async function(){
 }
 exports.getpurchases = async function(){
   var db = connection.openDbConnection();
-  var statement = "SELECT txn_id as id, price, quantity, stock_code as stock, txn_date as date from transactions WHERE txn_type = 'buy' AND txn_date > ?";
+  var statement = "SELECT txn_id as id, txn_type as transactionType, price, quantity, stock_code as stock, txn_date as date, remarks from transactions WHERE txn_type = 'buy' AND txn_date > ?";
   var purchases = await new Promise((resolve, reject) => {
     db.all(statement, [getLastFiscalYearTime()], function(err, res){
       if(err){
@@ -79,7 +90,7 @@ exports.getpurchases = async function(){
 }
 exports.getSales = async function(){
   var db = connection.openDbConnection();
-  var statement = "SELECT txn_id as id, price, quantity, stock_code as stock, txn_date as date from transactions WHERE txn_type = 'sell'";
+  var statement = "SELECT txn_id as id, txn_type as transactionType, price, quantity, stock_code as stock, txn_date as date, remarks from transactions WHERE txn_type = 'sell'";
   var sales = await new Promise((resolve, reject) => {
     db.all(statement, [], function(err, res){
       if(err){
@@ -153,7 +164,7 @@ function removeAndGetLTCG(res){
         console.log('into while')
         //console.log(getLastFiscalYearTime());
         //if purchase
-        if(res[topIndex].txn_type === 'buy' && res[topIndex].txn_date <= getLastFiscalYearTime()){
+        if(res[topIndex].txn_type === 'buy' && res[topIndex].txn_date <= getLastYear(res[it].txn_date)){
           //sell transaction is less than the purchased quantity
           if(res[topIndex].quantity > res[it].quantity){
             //calculating ltcg
@@ -190,7 +201,6 @@ function removeAndGetSTCG(res){
   console.log(res);
   let topIndex = 0, it = 1, stcg = 0;
   //removing stcg from the transaction list;
-  let lastFiscalYear = getLastFiscalYearTime();
   while(it < res.length){
     if(res[it].txn_type === 'buy'){
       //if its a purchase then move ahead;
@@ -205,7 +215,7 @@ function removeAndGetSTCG(res){
         console.log('into while')
         //console.log(getLastFiscalYearTime());
         //if purchase
-        if(res[topIndex].txn_type === 'buy' && res[topIndex].txn_date > lastFiscalYear){
+        if(res[topIndex].txn_type === 'buy' && res[topIndex].txn_date > getLastYear(res[it].txn_date)){
           //sell transaction is less than the purchased quantity
           if(res[topIndex].quantity > res[it].quantity){
             //calculating stcg
@@ -286,5 +296,17 @@ exports.getSummary = async function(){
   //resolve the promise object after everything is done;
   connection.closeDbConnection(db);
   return summary;
+}
+exports.deleteTransaction = function(txnId, callBack, errorCallBack){
+  var db = connection.openDbConnection();
+  var statement = "DELETE FROM transactions WHERE txn_id = ?";
+  var deleted = true;
+  db.run(statement, [txnId], function(err){
+    if(err){
+      errorCallBack.call();
+    }
+    callBack.call();
+  });
+  connection.closeDbConnection(db);
 }
 exports.removeAndGetSpeculation = removeAndGetSpeculation;

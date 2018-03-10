@@ -4,7 +4,7 @@ var webpack = require('webpack');
 module.exports = {
     devServer: {
         inline: true,
-        contentBase: './src',
+        contentBase: './build',
         port: 3000,
         proxy : {
           "/" : "http://localhost:8080"
@@ -41,7 +41,7 @@ module.exports = {
         ]
     },
     output: {
-        path: 'src',
+        path: 'build',
         filename: 'js/bundle.min.js'
     },
     plugins: [

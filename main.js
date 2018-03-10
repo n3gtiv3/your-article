@@ -15,11 +15,7 @@ let mainWindow
 function createWindow () {
   // Create the browser window.
   mainWindow = new BrowserWindow({width: 800, height: 600})
-  const startUrl = process.env.ELECTRON_START_URL || url.format({
-              pathname: path.join(__dirname, '/../src/index.html'),
-              protocol: 'file:',
-              slashes: true
-          });
+  const startUrl = "http://localhost:8080"
   mainWindow.loadURL(startUrl);
 
   // Open the DevTools.

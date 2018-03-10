@@ -9,7 +9,9 @@ import './table.scss';
 const DataTable = (props) => {
   const {
     data,
-    titles
+    titles,
+    updateTransaction,
+    deleteTransaction
   } = props;
   return (
     <div className={cx('tableContainer', props.className)}>
@@ -22,7 +24,8 @@ const DataTable = (props) => {
           </tr>
         </thead>
         <tbody>
-          {data.map(item => <Row key={_.uniqueId()} data={item} />)}
+          {data.map(item => <Row key={_.uniqueId()} data={item}
+          updateTransaction = {updateTransaction} deleteTransaction = {deleteTransaction}/>)}
         </tbody>
       </table>
     </Box>

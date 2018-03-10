@@ -30,6 +30,7 @@ exports.init = function(){
   + "'price' INTEGER,"
   + "'quantity' INTEGER,"
   + "'stock_code' TEXT,"
+  + "'remarks' TEXT,"
   + "'txn_type' TEXT)");
   closeDbConnection(db);
 }

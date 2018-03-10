@@ -1,5 +1,6 @@
 import TransactionService from "service/transactions";
 import {summary as actionType} from "constants/actions"
+import {checkUserInput} from "actions/dashboard";
 
 function _handleError(action, message){
   return {
@@ -41,5 +42,51 @@ export function getSales(){
     }, error => {
       dispatch(_handleError(actionType.SALES, error.message));
     });
+  }
+}
+export function updateTransaction(type, quantity, price, date, stockCode, remarks,  txnId){
+  return dispatch => {
+    if(!checkUserInput(dispatch, actionType.UPDATE_TRANSACTION, type, quantity, price, date, stockCode, txnId)){
+      return ;
+    }
+    let longDate = date.valueOf();
+    TransactionService.updateTransaction(
+      type,
+      quantity,
+      price,
+      longDate,
+      stockCode,
+      remarks,
+      txnId
+    ).then(response => {
+      console.log(response);
+      dispatch({
+        type : actionType.UPDATE_TRANSACTION,
+        message : response.message,
+        success : true
+      });
+      setTimeout(()=>{
+        window.location.reload();
+      }, 200);
+    }, error => {
+      dispatch(_handleError(actionType.UPDATE_TRANSACTION, error.message));
+    })
+  }
+}
+export function deleteTransaction(txnId){
+  return dispatch => {
+    TransactionService.deleteTransaction(txnId).then(response => {
+      console.log(response);
+      dispatch({
+        type : actionType.DELETE_TRANSACTION,
+        message : response.message,
+        success : true
+      });
+      setTimeout(()=>{
+        window.location.reload();
+      }, 200);
+    }, error => {
+      dispatch(_handleError(actionType.DELETE_TRANSACTION, error.message));
+    })
   }
 }

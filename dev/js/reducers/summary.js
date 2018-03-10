@@ -30,6 +30,20 @@ export default (state = {modal : false}, action) => {
           summary : action.sales,
           heading : 'Sales'
         }
+      case actionType.UPDATE_TRANSACTION:
+        return {
+          ...state,
+          message : action.message,
+          success : action.success,
+          modal : true
+        }
+      case actionType.DELETE_TRANSACTION:
+        return {
+          ...state,
+          message : action.message,
+          success : action.success,
+          modal : true
+        }
       default:
         return state;
   }

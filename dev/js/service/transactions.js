@@ -4,14 +4,30 @@ class Transaction{
   constructor(){
 
   }
-  saveTransaction(type, quantity, price, longDate, stockCode){
+  saveTransaction(type, quantity, price, longDate, stockCode, remarks){
       return HTTPRequest.get('/saveTransaction', {
         type,
         price,
         quantity,
         stockCode,
-        longDate
+        longDate,
+        remarks
       })
+  }
+  updateTransaction(type, quantity, price, longDate, stockCode,remarks, txnId){
+      return HTTPRequest.get('/saveTransaction', {
+        type,
+        price,
+        quantity,
+        stockCode,
+        longDate,
+        remarks,
+        update : true,
+        txnId
+      })
+  }
+  deleteTransaction(txnId){
+    return HTTPRequest.get('/deleteTransaction', {txnId});
   }
   getSummary(){
     return HTTPRequest.get('/summary');
