@@ -1,6 +1,7 @@
 import TransactionService from "service/transactions";
 import {summary as actionType} from "constants/actions"
 import {checkUserInput} from "actions/dashboard";
+import {getDateWithoutTime} from "utils/format";
 
 function _handleError(action, message){
   return {
@@ -16,7 +17,7 @@ export function getOpenings(){
         openings : response.openings
       })
     }, error => {
-      dispatch(_handleError(actionType.SUMMARY, error.message));
+    dispatch(_handleError(actionType.SUMMARY, error.message));
     });
   }
 }
@@ -49,6 +50,7 @@ export function updateTransaction(type, quantity, price, date, stockCode, remark
     if(!checkUserInput(dispatch, actionType.UPDATE_TRANSACTION, type, quantity, price, date, stockCode, txnId)){
       return ;
     }
+    date = getDateWithoutTime(date);
     let longDate = date.valueOf();
     TransactionService.updateTransaction(
       type,

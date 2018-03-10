@@ -63,7 +63,7 @@ app.get('/saveTransaction', function(req, res){
       message
     });
   }else if(type == "sell"){
-    checkIfCanSell(stockCode, quantity, longDate).then(canSell => {
+    checkIfCanSell(stockCode, quantity, longDate, update, txnId).then(canSell => {
       console.log(canSell);
       if(canSell){
         saveTxn(type, stockCode, quantity, price, longDate,remarks, update, txnId);

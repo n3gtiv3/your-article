@@ -12,3 +12,12 @@ export function formatDate(longDate){
 		return "";
 	}
 }
+export function getDateWithoutTime(date){
+	try{
+		date = date.set({hour:0,minute:0,second:0,millisecond:0});
+		return date;
+	}catch(e){
+		console.log(err);
+		return ;
+	}
+}

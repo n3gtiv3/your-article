@@ -14,10 +14,11 @@ let mainWindow
 
 function createWindow () {
   // Create the browser window.
-  mainWindow = new BrowserWindow({width: 800, height: 600})
+  mainWindow = new BrowserWindow({icon:path.join(__dirname, "./your-article.png")})
+  mainWindow.maximize();
   const startUrl = "http://localhost:8080"
   mainWindow.loadURL(startUrl);
-
+  mainWindow.setMenu(null);
   // Open the DevTools.
   // mainWindow.webContents.openDevTools()
 

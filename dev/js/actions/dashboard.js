@@ -1,5 +1,6 @@
 import {dashboard as actionType} from "constants/actions"
 import TransactionService from "service/transactions";
+import {getDateWithoutTime} from "utils/format";
 
 function _handleError(action, message){
   return {
@@ -36,6 +37,7 @@ export function saveTransaction(type, quantity, price, date, stockCode, remarks)
     if(!checkUserInput(dispatch, actionType.SAVE_TRANSACTION, type, quantity, price, date, stockCode)){
       return ;
     }
+    date = getDateWithoutTime(date);
     let longDate = date.valueOf();
     TransactionService.saveTransaction(
       type,

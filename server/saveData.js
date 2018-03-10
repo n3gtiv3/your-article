@@ -25,7 +25,7 @@ exports.saveTxn = function(type, stockCode, quantity, price, longDate, remarks, 
   db.run(statement, [longDate, price, quantity, stockCode, type, remarks]);
   connection.closeDbConnection(db);
 }
-exports.checkIfCanSell = function(stockCode, quantity, longDate){
+exports.checkIfCanSell = function(stockCode, quantity, longDate, isUpdate, txnId){
   var db = connection.openDbConnection();
   var statement = "SELECT sum(CASE WHEN txn_type == 'buy' THEN quantity ELSE 0 end) As bought,\
     sum(CASE WHEN txn_type == 'sell' THEN quantity ELSE 0 end) As sold from transactions where stock_code = ? AND txn_date <= ? ORDER BY txn_date";
@@ -35,8 +35,23 @@ exports.checkIfCanSell = function(stockCode, quantity, longDate){
         reject(err);
       }else{
         console.log(res);
-        console.log(res.bought >= res.sold + quantity)
-        resolve(res.bought >= quantity + res.sold);
+        console.log(res.bought >= (res.sold + quantity))
+
+        if(isUpdate){
+          //if update operation then get quantity of the existing transaction
+          var statement = "SELECT quantity FROM transactions WHERE txn_id = ?";
+          db.get(statement, [txnId], function(err, result){
+            console.log(result);
+            console.log(res.sold - result.quantity + quantity);
+            console.log(res.sold);
+            console.log(result.quantity);
+            console.log(quantity);
+            console.log(txnId);
+            resolve(res.bought >= (res.sold - result.quantity + quantity));
+          })
+        }else{
+          resolve(res.bought >= quantity + res.sold);
+        }
       }
     });
   });
